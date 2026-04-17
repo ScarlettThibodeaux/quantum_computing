@@ -1,1 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTUM MISSION CONTROL | SCARLETT THIBODEAUX 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;700;900&display=swap');
 
+        :root {
+            --nasa-blue: #0b3d91;
+            --nasa-red: #fc3d21;
+            --space-black: #020205;
+            --glass-blue: rgba(11, 61, 145, 0.15);
+            --glass-white: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(59, 130, 246, 0.3);
+        }
+        
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; 
+            background-color: var(--space-black);
+            color: #e2e8f0;
+            font-family: 'Public Sans', sans-serif;
+        }
+
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            z-index: -1;
+            background: radial-gradient(circle at center, #0a1128 0%, #020205 100%);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(5, 5, 10, 0.85);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-glow);
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 3rem 1.5rem;
+            background: linear-gradient(135deg, var(--nasa-blue), #000);
+            color: white;
+            border-bottom: 2px solid var(--nasa-red);
+        }
+
+        .nav-button {
+            width: 100%;
+            text-align: left;
+            padding: 1.2rem 1.5rem;
+            color: #94a3b8;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-button:hover {
+            background: var(--glass-blue);
+            color: white;
+            padding-left: 2rem;
+        }
+
+        .nav-button.active {
+            color: white;
+            background: var(--glass-blue);
+            border-right: 4px solid var(--nasa-red);
+        }
+
+        .content-area {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto; 
+            position: relative;
+        }
+
+        .page-section {
+            display: none; 
+            animation: fadeIn 0.8s ease-out;
+            padding: 4rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; filter: blur(10px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+
+        .glass-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(12px);
+            border-radius: 8px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: white;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Interactive Components */
+        .qubit-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .qubit-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #3b82f6;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 3s linear infinite;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .qubit-core {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #60a5fa;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+            z-index: 2;
+        }
+
+        .flicker {
+            animation: fast-flicker 0.08s infinite;
+        }
+
+        @keyframes fast-flicker {
+            0% { opacity: 0.8; transform: scale(1) skewX(2deg); }
+            50% { opacity: 0.3; transform: scale(1.05) skewX(-2deg); }
+            100% { opacity: 0.8; transform: scale(1) skewX(2deg); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .terminal {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #334155;
+            color: #34d399;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,1);
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .resource-link:hover {
+            background: var(--nasa-blue);
+            border-color: var(--nasa-red);
+            transform: translateX(10px);
+        }
+
+        /* Flight Ops specific styles */
+        .telemetry-gauge {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .sat-visualizer {
+            height: 200px;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .sat-orbiter {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 1px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+        }
+
+        .sat-icon {
+            position: absolute;
+            top: -12px;
+            left: calc(50% - 12px);
+            color: #60a5fa;
+            transform-origin: 12px 62px;
+            animation: orbit-animation 10s linear infinite;
+        }
+
+        @keyframes orbit-animation {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Cat Section Styling */
+        .cat-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body class="flex">
+
+    <canvas id="starfield"></canvas>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="text-xl font-black tracking-tighter leading-tight italic">SCARLETT THIBODEAUX 2026</h1>
+            <div class="h-1 w-10 bg-white mt-4 mb-2"></div>
+            <p class="text-[9px] opacity-70 uppercase tracking-[0.3em] font-bold">Orbital Command Unit</p>
+        </div>
+        
+        <div class="py-4">
+            <button class="nav-button active" onclick="showPage('home')">
+                <i data-lucide="orbit" size="18"></i> Mission Brief
+            </button>
+            <button class="nav-button" onclick="showPage('apps')">
+                <i data-lucide="satellite" size="18"></i> Flight Ops
+            </button>
+            <button class="nav-button" onclick="showPage('security')">
+                <i data-lucide="shield-alert" size="18"></i> Cyber Defense
+            </button>
+            <button class="nav-button" onclick="showPage('podcast')">
+                <i data-lucide="mic-2" size="18"></i> Audio Logs
+            </button>
+            <button class="nav-button mt-4 border-t border-white/10 pt-4" onclick="showPage('resources')">
+                <i data-lucide="database" size="18"></i> Data Links
+            </button>
+        </div>
+    </nav>
+
+    <main class="content-area">
+
+        <!-- Mission Brief -->
+        <section id="home" class="page-section active">
+            <h2 class="text-3xl section-title">Quantum Mechanics Visualizer</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Qubit Simulator -->
+                <div class="glass-card">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        <h3 class="text-lg font-black uppercase text-blue-400">Superposition Engine</h3>
+                    </div>
+                    
+                    <div class="bg-black/40 border border-white/5 rounded-lg p-8 mb-4">
+                        <div class="qubit-container">
+                            <div class="qubit-ring"></div>
+                            <div id="qubit-value" class="qubit-core flicker">?</div>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <p id="qubit-status" class="text-[10px] font-mono text-blue-400 mb-6 tracking-widest uppercase">State: Superposition (0+1)</p>
+                            <button onclick="measureQubit()" class="w-full bg-blue-600/20 border border-blue-500 text-white py-3 rounded text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all">Collapse Wavefunction</button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed uppercase tracking-tighter">A qubit exists in all possible states simultaneously until the act of measurement forces it to choose.</p>
+                </div>
+
+                <!-- Schrödinger's Cat Section -->
+                <div class="glass-card relative overflow-hidden group">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <h3 class="text-lg font-black uppercase text-yellow-400">Schrödinger's Box</h3>
+                    </div>
+                    
+                    <div class="bg-white/5 border border-white/10 rounded-lg p-4 flex flex-col items-center justify-center min-h-[200px] relative">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Schrodingers_cat.svg" alt="Schrodinger's Cat" class="w-48 h-auto opacity-80 filter grayscale brightness-150">
+                        
+                        <div id="cat-overlay" class="cat-overlay">
+                            <i data-lucide="box" class="text-yellow-500 mb-2" size="32"></i>
+                            <p class="text-[10px] font-bold uppercase tracking-widest">Box is Closed</p>
+                            <p class="text-[9px] text-slate-400 mt-1 italic">The cat is both "Happy" and "Sleepy" at the same time.</p>
+                            <button onclick="peekInBox()" class="mt-4 px-4 py-2 bg-yellow-600/20 border border-yellow-500 text-yellow-500 text-[10px] font-bold uppercase rounded hover:bg-yellow-600 hover:text-white transition-all">Peek Inside</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <p class="text-[11px] text-slate-400 leading-relaxed uppercase tracking-tighter">This famous thought experiment explains how quantum objects (like qubits) stay in two states at once until someone looks at them!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entanglement Simulator (Full Width) -->
+            <div class="glass-card">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                    <h3 class="text-lg font-black uppercase text-purple-400">Entanglement Relay</h3>
+                </div>
+                
+                <div class="bg-black/40 border border-white/5 rounded-lg p-8 mb-4">
+                    <div class="flex justify-between items-center h-[140px] px-4 relative max-w-lg mx-auto">
+                        <div id="entangled-1" class="w-16 h-16 rounded-full border border-purple-500/50 flex items-center justify-center font-black text-purple-400 text-3xl shadow-[0_0_15px_rgba(168,85,247,0.2)]">?</div>
+                        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-2 opacity-50"></div>
+                        <div id="entangled-2" class="w-16 h-16 rounded-full border border-purple-500/50 flex items-center justify-center font-black text-purple-400 text-3xl shadow-[0_0_15px_rgba(168,85,247,0.2)]">?</div>
+                    </div>
+                    <div class="mt-8 text-center max-w-sm mx-auto">
+                        <p id="entanglement-status" class="text-[10px] font-mono text-purple-400 mb-6 tracking-widest uppercase">Linked Correlation Active</p>
+                        <button onclick="flipEntangled()" class="w-full bg-purple-600/20 border border-purple-500 text-white py-3 rounded text-[10px] font-black uppercase tracking-widest hover:bg-purple-600 transition-all">Manipulate Particle A</button>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed uppercase tracking-tighter text-center">Entangled particles share a single identity; measuring one determines the state of the other instantly.</p>
+            </div>
+        </section>
+
+        <!-- Flight Ops -->
+        <section id="apps" class="page-section">
+            <h2 class="text-3xl section-title">Orbital Flight Operations</h2>
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="telemetry-gauge">
+                    <p class="text-[10px] text-blue-400 uppercase font-bold tracking-widest mb-1">Altitude</p>
+                    <p id="gauge-alt" class="text-2xl font-black text-white">408 km</p>
+                </div>
+                <div class="telemetry-gauge">
+                    <p class="text-[10px] text-emerald-400 uppercase font-bold tracking-widest mb-1">Velocity</p>
+                    <p id="gauge-vel" class="text-2xl font-black text-white">7.66 km/s</p>
+                </div>
+                <div class="telemetry-gauge">
+                    <p class="text-[10px] text-nasa-red uppercase font-bold tracking-widest mb-1">Decoherence Rate</p>
+                    <p id="gauge-deco" class="text-2xl font-black text-white">0.002%</p>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="sat-visualizer mb-8">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-12 h-12 bg-blue-900 rounded-full shadow-[0_0_40px_rgba(59,130,246,0.4)] border border-blue-500"></div>
+                    </div>
+                    <div id="sat-path" class="sat-orbiter">
+                        <div class="sat-icon">
+                            <i data-lucide="satellite" size="24"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between text-[10px] uppercase font-bold mb-2">
+                            <span class="text-slate-400">Thrust Calibration</span>
+                            <span id="thrust-val" class="text-white">50%</span>
+                        </div>
+                        <input type="range" id="thrust-slider" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-nasa-red" oninput="updateThrust(this.value)">
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="stabilizeOrbit()" class="flex-1 bg-blue-600/20 border border-blue-500 text-white py-4 rounded text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all">Stabilize Orbit</button>
+                        <button onclick="emergencyDescent()" class="flex-1 bg-nasa-red/20 border border-nasa-red text-white py-4 rounded text-[10px] font-black uppercase tracking-widest hover:bg-nasa-red transition-all">Emergency Recovery</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cyber Defense -->
+        <section id="security" class="page-section">
+            <h2 class="text-3xl section-title">Tactical Cybersecurity</h2>
+            <div class="glass-card">
+                <div class="terminal mb-8">
+                    <div class="flex justify-between border-b border-white/10 pb-2 mb-4 text-[9px] uppercase tracking-widest text-slate-500">
+                        <span>Console: quantum_def_v4</span>
+                        <span id="terminal-clock">00:00:00</span>
+                    </div>
+                    <div id="terminal-body" class="space-y-1 h-48 overflow-y-auto pr-2 text-[11px] font-mono">
+                        <p class="text-blue-400">> System Online. Monitoring RSA-2048 layers...</p>
+                        <p class="text-slate-500">> No quantum decoherence detected in firewall.</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="p-6 bg-red-900/10 border border-red-500/20 rounded">
+                        <h4 class="text-red-500 font-black text-[10px] uppercase tracking-widest mb-4">Offensive Simulation</h4>
+                        <button onclick="runShorsAttack()" id="shor-btn" class="w-full bg-red-600 text-white py-3 rounded text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all">Execute Shor's Factorization</button>
+                        <div class="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div id="attack-progress" class="h-full bg-red-600 w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-emerald-900/10 border border-emerald-500/20 rounded">
+                        <h4 class="text-emerald-500 font-black text-[10px] uppercase tracking-widest mb-4">Defensive Response</h4>
+                        <button onclick="deployShield()" id="shield-btn" class="w-full bg-slate-800 text-slate-500 py-3 rounded text-[10px] font-black uppercase tracking-widest cursor-not-allowed" disabled>Deploy PQC Lattice Shield</button>
+                        <div class="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div id="shield-progress" class="h-full bg-emerald-600 w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Links -->
+        <section id="resources" class="page-section">
+            <h2 class="text-3xl section-title">Intelligence Feed</h2>
+            <div class="grid gap-4">
+                <a href="https://www.ibm.com/quantum/roadmap" target="_blank" class="resource-link">
+                    <span>IBM Quantum Hardware Roadmap (2024-2033)</span>
+                    <i data-lucide="external-link" size="14"></i>
+                </a>
+                <a href="https://qiskit.org/" target="_blank" class="resource-link">
+                    <span>Qiskit Open Source Development Tools</span>
+                    <i data-lucide="external-link" size="14"></i>
+                </a>
+                <a href="https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards" target="_blank" class="resource-link">
+                    <span>NIST Finalized PQC Standards (2024)</span>
+                    <i data-lucide="external-link" size="14"></i>
+                </a>
+                <a href="https://www.uah.edu/news/items/uah-scientists-awarded-part-of-31-million-regional-quantum-hub" target="_blank" class="resource-link">
+                    <span>UAH Huntsville Regional Quantum Hub News</span>
+                    <i data-lucide="external-link" size="14"></i>
+                </a>
+                <a href="https://quantum-computing.ibm.com/" target="_blank" class="resource-link">
+                    <span>IBM Quantum Platform (Live Systems Access)</span>
+                    <i data-lucide="external-link" size="14"></i>
+                </a>
+                <a href="https://www.nature.com/articles/s41586-019-1666-5" target="_blank" class="resource-link">
+                    <span>Nature: Google Quantum Supremacy Claim (2019)</span>
+                    <i data-lucide="external-link" size="14"></i>
+                </a>
+                <a href="https://drive.google.com/file/d/16U2ItgG5lklVJkrQlBNndmxtfg1195z-/preview" target="_blank" class="resource-link">
+                    <span>Official Audio Log (Google Drive)</span>
+                    <i data-lucide="external-link" size="14"></i>
+                </a>
+            </div>
+        </section>
+
+        <section id="podcast" class="page-section">
+            <h2 class="text-3xl section-title">Comm Relay</h2>
+            <div class="glass-card bg-black p-4">
+                <iframe src="https://drive.google.com/file/d/16U2ItgG5lklVJkrQlBNndmxtfg1195z-/preview" width="100%" height="300" class="rounded opacity-80 grayscale hover:grayscale-0 transition-all"></iframe>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Starfield
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStars();
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 400; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5,
+                    speed: Math.random() * 0.05 + 0.01,
+                    alpha: Math.random(),
+                    phase: Math.random() * Math.PI
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                s.phase += 0.02;
+                let currentAlpha = s.alpha * (0.5 + Math.sin(s.phase) * 0.5);
+                ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                s.y -= s.speed;
+                if (s.y < 0) s.y = canvas.height;
+            });
+            requestAnimationFrame(animate);
+        }
+
+        // Qubit
+        setInterval(() => {
+            const el = document.getElementById('qubit-value');
+            if (el && el.classList.contains('flicker')) {
+                el.innerText = Math.random() > 0.5 ? '1' : '0';
+            }
+        }, 50);
+
+        function measureQubit() {
+            const el = document.getElementById('qubit-value');
+            const status = document.getElementById('qubit-status');
+            const btn = event.target;
+            if (el.classList.contains('flicker')) {
+                el.classList.remove('flicker');
+                const val = Math.random() > 0.5 ? '1' : '0';
+                el.innerText = val;
+                status.innerText = `Observation Complete: State fixed at [${val}]`;
+                status.classList.replace('text-blue-400', 'text-red-500');
+                btn.innerText = "Re-Energize Qubit";
+            } else {
+                el.classList.add('flicker');
+                status.innerText = "State: Superposition (0+1)";
+                status.classList.replace('text-red-500', 'text-blue-400');
+                btn.innerText = "Collapse Wavefunction";
+            }
+        }
+
+        // Schrödinger's Cat Logic
+        function peekInBox() {
+            const overlay = document.getElementById('cat-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.innerHTML = `
+                    <i data-lucide="eye" class="text-emerald-500 mb-2" size="32"></i>
+                    <p class="text-[10px] font-bold uppercase tracking-widest">Wavefunction Collapsed!</p>
+                    <p class="text-[9px] text-emerald-400 mt-1 italic">The cat is officially sleepy.</p>
+                    <button onclick="resetCat()" class="mt-4 px-4 py-2 bg-slate-800 border border-slate-600 text-white text-[10px] font-bold uppercase rounded">Close Box</button>
+                `;
+                lucide.createIcons();
+                overlay.style.opacity = '1';
+            }, 500);
+        }
+
+        function resetCat() {
+            const overlay = document.getElementById('cat-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.innerHTML = `
+                    <i data-lucide="box" class="text-yellow-500 mb-2" size="32"></i>
+                    <p class="text-[10px] font-bold uppercase tracking-widest">Box is Closed</p>
+                    <p class="text-[9px] text-slate-400 mt-1 italic">The cat is both "Happy" and "Sleepy" at the same time.</p>
+                    <button onclick="peekInBox()" class="mt-4 px-4 py-2 bg-yellow-600/20 border border-yellow-500 text-yellow-500 text-[10px] font-bold uppercase rounded hover:bg-yellow-600 hover:text-white transition-all">Peek Inside</button>
+                `;
+                lucide.createIcons();
+                overlay.style.opacity = '1';
+            }, 500);
+        }
+
+        // Entanglement
+        function flipEntangled() {
+            const p1 = document.getElementById('entangled-1');
+            const p2 = document.getElementById('entangled-2');
+            const newState = p1.innerText === '0' ? '1' : '0';
+            p1.innerText = newState;
+            p2.innerText = newState;
+        }
+
+        // Flight Ops Logic
+        function updateThrust(val) {
+            document.getElementById('thrust-val').innerText = `${val}%`;
+            const satIcon = document.querySelector('.sat-icon');
+            const speed = 20 - (val / 5);
+            satIcon.style.animationDuration = `${speed}s`;
+            document.getElementById('gauge-vel').innerText = `${(7.5 + (val/100)).toFixed(2)} km/s`;
+            document.getElementById('gauge-deco').innerText = `${(val/5000).toFixed(3)}%`;
+        }
+
+        function stabilizeOrbit() {
+            document.getElementById('thrust-slider').value = 50;
+            updateThrust(50);
+            const alt = document.getElementById('gauge-alt');
+            alt.innerText = "408 km";
+            alt.classList.add('text-emerald-400');
+            setTimeout(() => alt.classList.remove('text-emerald-400'), 1000);
+        }
+
+        function emergencyDescent() {
+            document.getElementById('thrust-slider').value = 0;
+            updateThrust(0);
+            document.getElementById('gauge-alt').innerText = "CALCULATING...";
+            setTimeout(() => {
+                document.getElementById('gauge-alt').innerText = "380 km (DANGER)";
+            }, 1000);
+        }
+
+        // Cyber Defense
+        function log(msg, color = 'text-slate-300') {
+            const body = document.getElementById('terminal-body');
+            const p = document.createElement('p');
+            p.className = color;
+            p.innerHTML = `> ${msg}`;
+            body.appendChild(p);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function runShorsAttack() {
+            const btn = document.getElementById('shor-btn');
+            const progress = document.getElementById('attack-progress');
+            const shieldBtn = document.getElementById('shield-btn');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            log("Shor's Algorithm initialization successful.", "text-red-400");
+            let w = 0;
+            const timer = setInterval(() => {
+                w += 1;
+                progress.style.width = w + '%';
+                if (w === 85) {
+                    shieldBtn.disabled = false;
+                    shieldBtn.classList.remove('text-slate-500');
+                    shieldBtn.classList.add('bg-emerald-600', 'text-white', 'animate-pulse');
+                }
+                if (w >= 100) { clearInterval(timer); log("RSA DECRYPTED.", "text-red-600 font-black"); }
+            }, 100);
+        }
+
+        function deployShield() {
+            const btn = document.getElementById('shield-btn');
+            const progress = document.getElementById('shield-progress');
+            btn.disabled = true;
+            btn.classList.remove('animate-pulse');
+            let w = 0;
+            const timer = setInterval(() => {
+                w += 2;
+                progress.style.width = w + '%';
+                if (w >= 100) {
+                    clearInterval(timer);
+                    log("LATTICE DEFENSE STABILIZED.", "text-emerald-500 font-bold");
+                }
+            }, 40);
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+            lucide.createIcons();
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+        setInterval(() => {
+            const clock = document.getElementById('terminal-clock');
+            if(clock) clock.innerText = new Date().toTimeString().split(' ')[0];
+        }, 1000);
+    </script>
+</body>
+</html>
